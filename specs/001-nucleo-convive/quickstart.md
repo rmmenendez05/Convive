@@ -14,7 +14,8 @@ docker compose up --build
 
 ```bash
 docker compose run --rm backend pytest
-docker run --rm -v "$PWD/frontend":/app -w /app node:22-alpine sh -c "npm ci && npm test"
+docker run --rm -v "$PWD/frontend":/app -v /app/node_modules -w /app node:22-alpine \
+  sh -c "npm ci && npm test"   # node_modules en un volumen aparte
 # o, en local con Node 22: cd frontend && npm ci && npm test
 ```
 

@@ -67,7 +67,8 @@ Decisiones técnicas tomadas en la Phase 0 del plan. Ninguna queda como NEEDS CL
 
 ## R8. Frontend
 
-- **Decision**: React Router 7 en modo librería (`createBrowserRouter`); `RutaProtegida` que
+- **Decision**: React Router 7 en modo declarativo (`<BrowserRouter>` + `<Routes>`, que permite
+  probar con `<MemoryRouter>`); `RutaProtegida` que
   redirige a `/login` sin token y a `/bienvenida` sin piso; formularios con `useActionState`
   (SPECS.md §5.3). Token en memoria (estado de `AuthContext`) y en `localStorage`
   (`convive.token`); ante un 401 se borra y se navega a `/login`.

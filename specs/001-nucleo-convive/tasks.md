@@ -27,14 +27,14 @@ escriben primero y deben fallar antes de implementar.
 
 **Purpose**: Estructura del repositorio, dependencias y Docker
 
-- [ ] T001 Crear la estructura de carpetas `backend/app/{core,models,schemas,routers,services}`, `backend/tests/`, `frontend/src/{api,context,i18n,components,pages,__tests__}` según plan.md
-- [ ] T002 Crear `backend/requirements.txt` con versiones exactas (fastapi, uvicorn, sqlalchemy, alembic, pydantic, email-validator, pyjwt, argon2-cffi, pytest, httpx) y `backend/pytest.ini`
-- [ ] T003 [P] Inicializar el frontend con Vite + React 19 en `frontend/package.json` (react-router, vitest, @testing-library/react, @testing-library/user-event, jsdom) y configurar Vitest en `frontend/vite.config.js` (entorno jsdom, proxy `/api` → `localhost:8000`)
-- [ ] T004 [P] Crear `.env.example` en la raíz con `JWT_SECRET`, `JWT_EXPIRES_HOURS=24`, `DATABASE_URL=sqlite:////data/convive.db`, `CORS_ORIGINS`
-- [ ] T005 [P] Crear `backend/Dockerfile` (python:3.12-slim, usuario no root, `alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000`)
-- [ ] T006 [P] Crear `frontend/Dockerfile` multi-etapa (node:22-alpine → nginx:alpine) y `frontend/nginx.conf` (fallback SPA + `location /api/` → `http://backend:8000`)
-- [ ] T007 Crear `docker-compose.yml` con servicios `backend` (8000) y `frontend` (80 → 5173), volumen `convive-data:/data` y `env_file: .env`; comprobar que `docker compose up --build` levanta ambos
-- [ ] T008 [P] Crear `README.md` con arranque con Docker y cómo ejecutar tests de backend y frontend (según quickstart.md)
+- [X] T001 Crear la estructura de carpetas `backend/app/{core,models,schemas,routers,services}`, `backend/tests/`, `frontend/src/{api,context,i18n,components,pages,__tests__}` según plan.md
+- [X] T002 Crear `backend/requirements.txt` con versiones exactas (fastapi, uvicorn, sqlalchemy, alembic, pydantic, email-validator, pyjwt, argon2-cffi, pytest, httpx) y `backend/pytest.ini`
+- [X] T003 [P] Inicializar el frontend con Vite + React 19 en `frontend/package.json` (react-router, vitest, @testing-library/react, @testing-library/user-event, jsdom) y configurar Vitest en `frontend/vite.config.js` (entorno jsdom, proxy `/api` → `localhost:8000`)
+- [X] T004 [P] Crear `.env.example` en la raíz con `JWT_SECRET`, `JWT_EXPIRES_HOURS=24`, `DATABASE_URL=sqlite:////data/convive.db`, `CORS_ORIGINS`
+- [X] T005 [P] Crear `backend/Dockerfile` (python:3.12-slim, usuario no root, `alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000`)
+- [X] T006 [P] Crear `frontend/Dockerfile` multi-etapa (node:22-alpine → nginx:alpine) y `frontend/nginx.conf` (fallback SPA + `location /api/` → `http://backend:8000`)
+- [X] T007 Crear `docker-compose.yml` con servicios `backend` (8000) y `frontend` (80 → 5173), volumen `convive-data:/data` y `env_file: .env`; comprobar que `docker compose up --build` levanta ambos
+- [X] T008 [P] Crear `README.md` con arranque con Docker y cómo ejecutar tests de backend y frontend (según quickstart.md)
 
 ---
 
@@ -44,21 +44,21 @@ escriben primero y deben fallar antes de implementar.
 
 **⚠️ CRITICAL**: Ninguna historia empieza hasta terminar esta fase
 
-- [ ] T009 Implementar `backend/app/core/config.py` (lectura de variables de entorno, sin valores secretos por defecto en producción)
-- [ ] T010 Implementar `backend/app/core/db.py` (engine, `SessionLocal`, `Base`, `PRAGMA foreign_keys=ON`) y `get_db` en `backend/app/deps.py`
-- [ ] T011 [P] Crear modelos SQLAlchemy en `backend/app/models/{usuario,piso,miembro,aviso}.py` según data-model.md
-- [ ] T012 Configurar Alembic (`backend/alembic.ini`, `backend/alembic/env.py`) y crear la migración `backend/alembic/versions/0001_nucleo.py` con las cuatro tablas, índices y restricciones
-- [ ] T013 [P] Implementar el catálogo bilingüe `backend/app/core/i18n.py` (códigos de contracts/api.md, elección por `Accept-Language`, `es` por defecto)
-- [ ] T014 Implementar `backend/app/core/errors.py`: `AppError` y manejadores para `AppError`, `RequestValidationError` (→ 400 `datos_invalidos` con `details`), `HTTPException` y `Exception` (500 `error_interno`); registrarlos en `backend/app/main.py`
-- [ ] T015 [P] Implementar `backend/app/core/security.py`: hash/verificación Argon2id, creación y validación de JWT de 24 h
-- [ ] T016 Implementar `get_usuario_actual` (401 `no_autenticado`) y `get_miembro_actual` (404 `sin_piso`) en `backend/app/deps.py`
-- [ ] T017 Crear `backend/tests/conftest.py` (SQLite en memoria con `StaticPool`, override de `get_db`, `client`, fábricas `crear_usuario`, `login`, `crear_piso_con_miembros`)
-- [ ] T018 [P] Tests del formato de error y del idioma en `backend/tests/test_errores.py` (400 por validación con formato único, 401 sin token / token caducado / token manipulado, mensaje en `en` con `Accept-Language: en`, ruta inexistente 404 con formato único)
-- [ ] T019 [P] Test de migraciones en `backend/tests/test_migraciones.py` (`alembic upgrade head` sobre una BD temporal crea las tablas esperadas)
-- [ ] T020 [P] Implementar el cliente único `frontend/src/api/client.js` (base `/api`, cabeceras `Authorization` y `Accept-Language`, parseo del error `{error:{code,message}}` a una excepción `ApiError`, borrado del token ante 401)
-- [ ] T021 [P] Implementar i18n del frontend: `frontend/src/i18n/{es,en}.js`, `frontend/src/context/LangContext.jsx`, hook `useT` y `frontend/src/components/SelectorIdioma.jsx` (persistencia en `localStorage` `convive.lang`)
-- [ ] T022 Implementar `frontend/src/context/AuthContext.jsx` (token en memoria + `localStorage` `convive.token`, usuario actual vía `GET /auth/yo`), `frontend/src/components/RutaProtegida.jsx` y el router en `frontend/src/App.jsx`
-- [ ] T023 [P] Tests del frontend base en `frontend/src/__tests__/client.test.js` (cabeceras, parseo de errores, 401) y `frontend/src/__tests__/i18n.test.jsx` (idioma por defecto, cambio y persistencia)
+- [X] T009 Implementar `backend/app/core/config.py` (lectura de variables de entorno, sin valores secretos por defecto en producción)
+- [X] T010 Implementar `backend/app/core/db.py` (engine, `SessionLocal`, `Base`, `PRAGMA foreign_keys=ON`) y `get_db` en `backend/app/deps.py`
+- [X] T011 [P] Crear modelos SQLAlchemy en `backend/app/models/{usuario,piso,miembro,aviso}.py` según data-model.md
+- [X] T012 Configurar Alembic (`backend/alembic.ini`, `backend/alembic/env.py`) y crear la migración `backend/alembic/versions/0001_nucleo.py` con las cuatro tablas, índices y restricciones
+- [X] T013 [P] Implementar el catálogo bilingüe `backend/app/core/i18n.py` (códigos de contracts/api.md, elección por `Accept-Language`, `es` por defecto)
+- [X] T014 Implementar `backend/app/core/errors.py`: `AppError` y manejadores para `AppError`, `RequestValidationError` (→ 400 `datos_invalidos` con `details`), `HTTPException` y `Exception` (500 `error_interno`); registrarlos en `backend/app/main.py`
+- [X] T015 [P] Implementar `backend/app/core/security.py`: hash/verificación Argon2id, creación y validación de JWT de 24 h
+- [X] T016 Implementar `get_usuario_actual` (401 `no_autenticado`) y `get_miembro_actual` (404 `sin_piso`) en `backend/app/deps.py`
+- [X] T017 Crear `backend/tests/conftest.py` (SQLite en memoria con `StaticPool`, override de `get_db`, `client`, fábricas `crear_usuario`, `login`, `crear_piso_con_miembros`)
+- [X] T018 [P] Tests del formato de error y del idioma en `backend/tests/test_errores.py` (400 por validación con formato único, 401 sin token / token caducado / token manipulado, mensaje en `en` con `Accept-Language: en`, ruta inexistente 404 con formato único)
+- [X] T019 [P] Test de migraciones en `backend/tests/test_migraciones.py` (`alembic upgrade head` sobre una BD temporal crea las tablas esperadas)
+- [X] T020 [P] Implementar el cliente único `frontend/src/api/client.js` (base `/api`, cabeceras `Authorization` y `Accept-Language`, parseo del error `{error:{code,message}}` a una excepción `ApiError`, borrado del token ante 401)
+- [X] T021 [P] Implementar i18n del frontend: `frontend/src/i18n/{es,en}.js`, `frontend/src/context/LangContext.jsx`, hook `useT` y `frontend/src/components/SelectorIdioma.jsx` (persistencia en `localStorage` `convive.lang`)
+- [X] T022 Implementar `frontend/src/context/AuthContext.jsx` (token en memoria + `localStorage` `convive.token`, usuario actual vía `GET /auth/yo`), `frontend/src/components/RutaProtegida.jsx` y el router en `frontend/src/App.jsx`
+- [X] T023 [P] Tests del frontend base en `frontend/src/__tests__/client.test.js` (cabeceras, parseo de errores, 401) y `frontend/src/__tests__/i18n.test.jsx` (idioma por defecto, cambio y persistencia)
 
 **Checkpoint**: Base lista; las historias pueden empezar
 
@@ -73,16 +73,16 @@ genérico.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T024 [P] [US1] Tests de `POST /api/auth/registro` en `backend/tests/test_auth.py`: 201; 409 `email_ya_registrado` (también con distinto uso de mayúsculas); 400 por email mal formado, contraseña < 8, nombre vacío y nombre > 40; la contraseña no se guarda en claro
-- [ ] T025 [P] [US1] Tests de `POST /api/auth/login` y `GET /api/auth/yo` en `backend/tests/test_auth.py`: 200 con token; 401 `credenciales_invalidas` idéntico para email inexistente y contraseña errónea; `/auth/yo` devuelve `piso_id: null` sin piso
-- [ ] T026 [P] [US1] Tests de pantallas en `frontend/src/__tests__/acceso.test.jsx`: registro correcto redirige a login/bienvenida; error `email_ya_registrado` visible; login fallido muestra el mensaje; sin token, una ruta protegida redirige a `/login`
+- [X] T024 [P] [US1] Tests de `POST /api/auth/registro` en `backend/tests/test_auth.py`: 201; 409 `email_ya_registrado` (también con distinto uso de mayúsculas); 400 por email mal formado, contraseña < 8, nombre vacío y nombre > 40; la contraseña no se guarda en claro
+- [X] T025 [P] [US1] Tests de `POST /api/auth/login` y `GET /api/auth/yo` en `backend/tests/test_auth.py`: 200 con token; 401 `credenciales_invalidas` idéntico para email inexistente y contraseña errónea; `/auth/yo` devuelve `piso_id: null` sin piso
+- [X] T026 [P] [US1] Tests de pantallas en `frontend/src/__tests__/acceso.test.jsx`: registro correcto redirige a login/bienvenida; error `email_ya_registrado` visible; login fallido muestra el mensaje; sin token, una ruta protegida redirige a `/login`
 
 ### Implementation for User Story 1
 
-- [ ] T027 [P] [US1] Esquemas `RegistroIn`, `LoginIn`, `UsuarioOut`, `TokenOut`, `YoOut` en `backend/app/schemas/auth.py`
-- [ ] T028 [US1] Servicio `backend/app/services/auth_service.py`: registrar (email en minúsculas, unicidad), autenticar sin enumeración (hash ficticio), datos de `/auth/yo`
-- [ ] T029 [US1] Router `backend/app/routers/auth.py` (`/registro`, `/login`, `/yo`) registrado en `backend/app/main.py`
-- [ ] T030 [P] [US1] Páginas `frontend/src/pages/Registro.jsx` y `frontend/src/pages/Login.jsx` con `useActionState`, errores traducidos y `frontend/src/components/FormError.jsx`
+- [X] T027 [P] [US1] Esquemas `RegistroIn`, `LoginIn`, `UsuarioOut`, `TokenOut`, `YoOut` en `backend/app/schemas/auth.py`
+- [X] T028 [US1] Servicio `backend/app/services/auth_service.py`: registrar (email en minúsculas, unicidad), autenticar sin enumeración (hash ficticio), datos de `/auth/yo`
+- [X] T029 [US1] Router `backend/app/routers/auth.py` (`/registro`, `/login`, `/yo`) registrado en `backend/app/main.py`
+- [X] T030 [P] [US1] Páginas `frontend/src/pages/Registro.jsx` y `frontend/src/pages/Login.jsx` con `useActionState`, errores traducidos y `frontend/src/components/FormError.jsx`
 
 **Checkpoint**: US1 funcional y probada de forma independiente
 
@@ -96,16 +96,16 @@ genérico.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T031 [P] [US2] Tests de `POST /api/pisos` en `backend/tests/test_pisos.py`: 201 con código `[A-Z0-9]{8}` y creador admin; 400 nombre vacío / > 60 / dirección > 200; 409 `ya_tiene_piso`; 401 sin token
-- [ ] T032 [P] [US2] Tests de `POST /api/pisos/unirse` en `backend/tests/test_pisos.py`: 200 como miembro; código en minúsculas válido; 404 `codigo_invalido`; 409 `ya_tiene_piso`; códigos de dos pisos distintos son diferentes
-- [ ] T033 [P] [US2] Tests de `frontend/src/__tests__/bienvenida.test.jsx`: crear piso y unirse llevan a `/piso`; error `codigo_invalido` visible; con piso, `/bienvenida` redirige a `/piso`
+- [X] T031 [P] [US2] Tests de `POST /api/pisos` en `backend/tests/test_pisos.py`: 201 con código `[A-Z0-9]{8}` y creador admin; 400 nombre vacío / > 60 / dirección > 200; 409 `ya_tiene_piso`; 401 sin token
+- [X] T032 [P] [US2] Tests de `POST /api/pisos/unirse` en `backend/tests/test_pisos.py`: 200 como miembro; código en minúsculas válido; 404 `codigo_invalido`; 409 `ya_tiene_piso`; códigos de dos pisos distintos son diferentes
+- [X] T033 [P] [US2] Tests de `frontend/src/__tests__/bienvenida.test.jsx`: crear piso y unirse llevan a `/piso`; error `codigo_invalido` visible; con piso, `/bienvenida` redirige a `/piso`
 
 ### Implementation for User Story 2
 
-- [ ] T034 [P] [US2] Esquemas `PisoIn`, `UnirseIn`, `PisoOut` (código opcional), `MiembroOut` en `backend/app/schemas/piso.py`
-- [ ] T035 [US2] Servicio `backend/app/services/piso_service.py`: `generar_codigo` (único, reintentos), `crear_piso`, `unirse`
-- [ ] T036 [US2] Router `backend/app/routers/pisos.py` con `POST /pisos` y `POST /pisos/unirse`, registrado en `backend/app/main.py`
-- [ ] T037 [US2] Página `frontend/src/pages/Bienvenida.jsx` (formularios crear / unirse con `useActionState`)
+- [X] T034 [P] [US2] Esquemas `PisoIn`, `UnirseIn`, `PisoOut` (código opcional), `MiembroOut` en `backend/app/schemas/piso.py`
+- [X] T035 [US2] Servicio `backend/app/services/piso_service.py`: `generar_codigo` (único, reintentos), `crear_piso`, `unirse`
+- [X] T036 [US2] Router `backend/app/routers/pisos.py` con `POST /pisos` y `POST /pisos/unirse`, registrado en `backend/app/main.py`
+- [X] T037 [US2] Página `frontend/src/pages/Bienvenida.jsx` (formularios crear / unirse con `useActionState`)
 
 **Checkpoint**: US1 + US2 funcionan (MVP mínimo: cuentas y pisos)
 
@@ -119,13 +119,13 @@ genérico.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T038 [P] [US3] Tests de `GET /api/pisos/mio` en `backend/tests/test_pisos.py`: admin ve código; miembro no recibe la clave `codigo_invitacion`; miembros ordenados por antigüedad; 404 `sin_piso`
-- [ ] T039 [P] [US3] Tests de `frontend/src/__tests__/piso.test.jsx`: lista de miembros con rol; código visible solo para admin
+- [X] T038 [P] [US3] Tests de `GET /api/pisos/mio` en `backend/tests/test_pisos.py`: admin ve código; miembro no recibe la clave `codigo_invitacion`; miembros ordenados por antigüedad; 404 `sin_piso`
+- [X] T039 [P] [US3] Tests de `frontend/src/__tests__/piso.test.jsx`: lista de miembros con rol; código visible solo para admin
 
 ### Implementation for User Story 3
 
-- [ ] T040 [US3] `obtener_piso(usuario)` en `backend/app/services/piso_service.py` y `GET /pisos/mio` en `backend/app/routers/pisos.py`
-- [ ] T041 [US3] Página `frontend/src/pages/Piso.jsx` (cabecera del piso, `frontend/src/components/ListaMiembros.jsx`, código para admin)
+- [X] T040 [US3] `obtener_piso(usuario)` en `backend/app/services/piso_service.py` y `GET /pisos/mio` en `backend/app/routers/pisos.py`
+- [X] T041 [US3] Página `frontend/src/pages/Piso.jsx` (cabecera del piso, `frontend/src/components/ListaMiembros.jsx`, código para admin)
 
 **Checkpoint**: US3 funcional
 
@@ -139,16 +139,16 @@ genérico.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T042 [P] [US4] Tests de `POST /api/avisos` y `GET /api/avisos` en `backend/tests/test_avisos.py`: 201 con autor y fecha; 400 vacío / solo espacios / > 280; orden descendente; nunca avisos de otro piso; 404 `sin_piso`
-- [ ] T043 [P] [US4] Tests de `DELETE /api/avisos/{id}` en `backend/tests/test_avisos.py`: 204 por autor; 204 por admin; 403 `permiso_denegado` para otro miembro; 404 `aviso_no_encontrado` si no existe o es de otro piso
-- [ ] T044 [P] [US4] Tests de `frontend/src/__tests__/tablon.test.jsx`: publicar añade el aviso arriba; contador de 280; botón borrar solo para autor o admin
+- [X] T042 [P] [US4] Tests de `POST /api/avisos` y `GET /api/avisos` en `backend/tests/test_avisos.py`: 201 con autor y fecha; 400 vacío / solo espacios / > 280; orden descendente; nunca avisos de otro piso; 404 `sin_piso`
+- [X] T043 [P] [US4] Tests de `DELETE /api/avisos/{id}` en `backend/tests/test_avisos.py`: 204 por autor; 204 por admin; 403 `permiso_denegado` para otro miembro; 404 `aviso_no_encontrado` si no existe o es de otro piso
+- [X] T044 [P] [US4] Tests de `frontend/src/__tests__/tablon.test.jsx`: publicar añade el aviso arriba; contador de 280; botón borrar solo para autor o admin
 
 ### Implementation for User Story 4
 
-- [ ] T045 [P] [US4] Esquemas `AvisoIn`, `AvisoOut` en `backend/app/schemas/aviso.py`
-- [ ] T046 [US4] Servicio `backend/app/services/aviso_service.py` (publicar, listar del piso, borrar con permisos)
-- [ ] T047 [US4] Router `backend/app/routers/avisos.py` registrado en `backend/app/main.py`
-- [ ] T048 [US4] Componentes `frontend/src/components/Tablon.jsx` y `frontend/src/components/AvisoItem.jsx` integrados en `frontend/src/pages/Piso.jsx`
+- [X] T045 [P] [US4] Esquemas `AvisoIn`, `AvisoOut` en `backend/app/schemas/aviso.py`
+- [X] T046 [US4] Servicio `backend/app/services/aviso_service.py` (publicar, listar del piso, borrar con permisos)
+- [X] T047 [US4] Router `backend/app/routers/avisos.py` registrado en `backend/app/main.py`
+- [X] T048 [US4] Componentes `frontend/src/components/Tablon.jsx` y `frontend/src/components/AvisoItem.jsx` integrados en `frontend/src/pages/Piso.jsx`
 
 **Checkpoint**: US1–US4 funcionan
 
@@ -163,16 +163,16 @@ restante pasa a admin; al abandonar el último, el piso desaparece.
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T049 [P] [US5] Tests de `DELETE /api/pisos/mio/miembros/{id}` en `backend/tests/test_miembros.py`: 204 y el expulsado queda sin piso y sin avisos; 403 no admin; 400 `no_puede_expulsarse`; 404 `miembro_no_encontrado` (incluido usuario de otro piso); el expulsado puede unirse a otro piso
-- [ ] T050 [P] [US5] Tests de `POST /api/pisos/mio/abandonar` en `backend/tests/test_miembros.py`: miembro abandona y se borran sus avisos (los de otros siguen); admin abandona → admin el más antiguo (desempate por id); único miembro → piso y avisos eliminados; siempre un único admin; 404 `sin_piso`
-- [ ] T051 [P] [US5] Tests de `POST /api/pisos/mio/codigo` en `backend/tests/test_miembros.py`: 200 código nuevo distinto; el anterior da 404 `codigo_invalido`; 403 no admin
-- [ ] T052 [P] [US5] Tests de `frontend/src/__tests__/miembros.test.jsx`: botones de expulsar y regenerar solo para admin; confirmación integrada en la página antes de expulsar/abandonar; tras abandonar se va a `/bienvenida`
+- [X] T049 [P] [US5] Tests de `DELETE /api/pisos/mio/miembros/{id}` en `backend/tests/test_miembros.py`: 204 y el expulsado queda sin piso y sin avisos; 403 no admin; 400 `no_puede_expulsarse`; 404 `miembro_no_encontrado` (incluido usuario de otro piso); el expulsado puede unirse a otro piso
+- [X] T050 [P] [US5] Tests de `POST /api/pisos/mio/abandonar` en `backend/tests/test_miembros.py`: miembro abandona y se borran sus avisos (los de otros siguen); admin abandona → admin el más antiguo (desempate por id); único miembro → piso y avisos eliminados; siempre un único admin; 404 `sin_piso`
+- [X] T051 [P] [US5] Tests de `POST /api/pisos/mio/codigo` en `backend/tests/test_miembros.py`: 200 código nuevo distinto; el anterior da 404 `codigo_invalido`; 403 no admin
+- [X] T052 [P] [US5] Tests de `frontend/src/__tests__/miembros.test.jsx`: botones de expulsar y regenerar solo para admin; confirmación integrada en la página antes de expulsar/abandonar; tras abandonar se va a `/bienvenida`
 
 ### Implementation for User Story 5
 
-- [ ] T053 [US5] `expulsar`, `abandonar` (transacción: borrar avisos → borrar membresía → traspasar admin o eliminar piso) y `regenerar_codigo` en `backend/app/services/piso_service.py`
-- [ ] T054 [US5] Endpoints `DELETE /pisos/mio/miembros/{usuario_id}`, `POST /pisos/mio/abandonar`, `POST /pisos/mio/codigo` en `backend/app/routers/pisos.py`
-- [ ] T055 [US5] Acciones de gestión en `frontend/src/components/ListaMiembros.jsx` y `frontend/src/pages/Piso.jsx` (expulsar, abandonar, regenerar, con confirmación en página)
+- [X] T053 [US5] `expulsar`, `abandonar` (transacción: borrar avisos → borrar membresía → traspasar admin o eliminar piso) y `regenerar_codigo` en `backend/app/services/piso_service.py`
+- [X] T054 [US5] Endpoints `DELETE /pisos/mio/miembros/{usuario_id}`, `POST /pisos/mio/abandonar`, `POST /pisos/mio/codigo` en `backend/app/routers/pisos.py`
+- [X] T055 [US5] Acciones de gestión en `frontend/src/components/ListaMiembros.jsx` y `frontend/src/pages/Piso.jsx` (expulsar, abandonar, regenerar, con confirmación en página)
 
 **Checkpoint**: Todas las historias del núcleo funcionan
 
@@ -180,11 +180,11 @@ restante pasa a admin; al abandonar el último, el piso desaparece.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T056 [P] Test de aislamiento en `backend/tests/test_aislamiento.py`: con dos pisos, ningún endpoint devuelve ni modifica datos del otro (SC-004)
-- [ ] T057 [P] Test de concurrencia de registro en `backend/tests/test_auth.py`: la restricción `UNIQUE` provoca 409 y no 500
-- [ ] T058 Revisar que cada criterio de aceptación de spec.md tiene al menos un test (tabla de trazabilidad en `specs/001-nucleo-convive/checklists/trazabilidad.md`)
-- [ ] T059 Validar quickstart.md de principio a fin con `docker compose up --build`, incluida la persistencia tras `down`/`up` (SC-005)
-- [ ] T060 [P] Actualizar `docs/SPECS.md` y `docs/proceso-spec-kit.md` si el comportamiento final difiere de lo especificado
+- [X] T056 [P] Test de aislamiento en `backend/tests/test_aislamiento.py`: con dos pisos, ningún endpoint devuelve ni modifica datos del otro (SC-004)
+- [X] T057 [P] Test de concurrencia de registro en `backend/tests/test_auth.py`: la restricción `UNIQUE` provoca 409 y no 500
+- [X] T058 Revisar que cada criterio de aceptación de spec.md tiene al menos un test (tabla de trazabilidad en `specs/001-nucleo-convive/checklists/trazabilidad.md`)
+- [X] T059 Validar quickstart.md de principio a fin con `docker compose up --build`, incluida la persistencia tras `down`/`up` (SC-005)
+- [X] T060 [P] Actualizar `docs/SPECS.md` y `docs/proceso-spec-kit.md` si el comportamiento final difiere de lo especificado
 
 ---
 

@@ -138,9 +138,45 @@ Se revisaron spec, plan y tareas entre sí:
 - Diferencias con SPECS.md original, ya reflejadas en `docs/SPECS.md`: nombre obligatorio,
   sesión de 24 h, borrado de avisos al salir, interfaz bilingüe y endpoint `GET /api/auth/yo`.
 
+## Paso 9 · Implementación (`/speckit-implement`)
+
+Se ejecutaron las 60 tareas de `tasks.md` por fases, con los tests antes del código, y todas están
+marcadas `[X]`.
+
+**Backend** (`backend/`):
+
+- `core/`: configuración por variables de entorno, BD con claves foráneas, formato único de error
+  (también 422 → 400, 404, 405 y 500), mensajes es/en según `Accept-Language`, Argon2id y JWT de 24 h.
+- `models/` + migración Alembic `0001_nucleo` (un test comprueba que coincide con los modelos).
+- `services/`: toda la lógica (registro sin enumeración de emails, código de invitación único,
+  traspaso de administrador al más antiguo, borrado de avisos al salir, aislamiento por piso).
+- `routers/`: 12 endpoints finos, sin lógica de negocio.
+- **95 tests** con pytest, todos en verde.
+
+**Frontend** (`frontend/`):
+
+- Cliente único `src/api/client.js` (token, idioma, errores y cierre de sesión ante 401).
+- `AuthContext` (token en memoria y `localStorage`), `LangContext` (es/en recordado), rutas
+  protegidas y pantallas Login, Registro, Bienvenida y Piso (miembros, código, tablón).
+- Formularios con `useActionState` de React 19 y confirmación dentro de la página antes de
+  expulsar, abandonar o regenerar el código.
+- **36 tests** con Vitest y React Testing Library, todos en verde.
+
+**Docker**: `docker compose up --build` levanta `backend` (8000) y `frontend` (Nginx en 5173,
+con proxy de `/api`). Se validó el quickstart de principio a fin con peticiones reales, incluida
+la persistencia tras `docker compose down` y `up`.
+
+**Trazabilidad**: `specs/001-nucleo-convive/checklists/trazabilidad.md` relaciona cada criterio
+de aceptación con sus tests.
+
+Ajustes durante la implementación (ya reflejados en los artefactos):
+
+- React Router en modo declarativo (`<Routes>`) en lugar de `createBrowserRouter`, para poder
+  probar con `<MemoryRouter>`.
+- El comando de tests del frontend en Docker monta `node_modules` en un volumen aparte para no
+  sobrescribir el de la máquina local.
+
 ## Siguientes pasos
 
-1. `/speckit-implement`: ejecutar las tareas de `tasks.md` por fases, empezando por el MVP
-   (US1 + US2).
-2. Cuando el núcleo esté en verde, nueva feature con `/speckit-specify` para el módulo de gastos
-   (SPECS.md §3), que creará `specs/002-gastos-compartidos/`.
+1. El núcleo ya está en verde: la siguiente feature es el módulo de gastos
+   (SPECS.md §3), con `/speckit-specify`, que creará `specs/002-gastos-compartidos/`.
