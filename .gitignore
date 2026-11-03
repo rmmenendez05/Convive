@@ -1,0 +1,24 @@
+# Claude Code: configuración y datos locales (los skills de Spec Kit sí se versionan)
+.claude/*
+!.claude/skills/
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+
+# Entorno y datos
+.env
+*.db
+*.sqlite3
+
+# Sistema / editor
+.DS_Store
+.vscode/
