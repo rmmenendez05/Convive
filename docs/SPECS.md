@@ -2,7 +2,8 @@
 
 > Documento pensado para dárselo a un agente de IA (Claude Code, Copilot, Cursor…) siguiendo Spec-Driven Development.
 > Está ordenado como el flujo de Spec-kit: **constitución → especificación → aclaraciones → plan → tareas**.
-> Si usas Spec-kit, pega cada sección en su comando (`/speckit.constitution`, `/speckit.specify`, `/speckit.clarify`, `/speckit.plan`, `/speckit.tasks`).
+> Si usas Spec-kit, pega cada sección en su comando (`/speckit-constitution`, `/speckit-specify`, `/speckit-clarify`, `/speckit-plan`, `/speckit-tasks`).
+> Los artefactos generados del núcleo están en `specs/001-nucleo-convive/` y el registro del proceso en `docs/proceso-spec-kit.md`.
 
 ---
 
@@ -56,14 +57,15 @@ Convive es una app web para que los compañeros de piso organicen la convivencia
 ### 2.3 Historias de usuario y criterios de aceptación
 
 **HU-01 · Registro**
-Como visitante, quiero registrarme con email y contraseña para usar la app.
+Como visitante, quiero registrarme con email, contraseña y nombre para usar la app.
 - Email válido y único; si ya existe → `409 email_ya_registrado`.
 - Contraseña de al menos 8 caracteres; si no → `400`.
+- Nombre visible obligatorio, de 1 a 40 caracteres; si no → `400`.
 - Se guarda el hash de la contraseña, nunca el texto.
 
 **HU-02 · Inicio de sesión**
 Como visitante, quiero iniciar sesión para acceder a mi piso.
-- Credenciales correctas → devuelve token.
+- Credenciales correctas → devuelve token, válido 24 horas (sin renovación).
 - Credenciales incorrectas → `401` con mensaje genérico (no revelar si el email existe).
 
 **HU-03 · Crear un piso**
@@ -155,6 +157,10 @@ Como quien lo registró o administrador, quiero borrar un gasto erróneo. Los sa
 | ¿Caduca el código de invitación? | No, pero el administrador puede regenerarlo (HU-08). |
 | ¿Se pueden editar los avisos? | No, solo borrarlos. |
 | ¿Moneda? | Solo euros. |
+| ¿Se pide nombre al registrarse? | Sí, obligatorio (1–40 caracteres). |
+| ¿Cuánto dura la sesión? | 24 horas, sin renovación. |
+| ¿Qué pasa con los avisos de un miembro que se va (abandona o es expulsado)? | Se borran todos sus avisos de ese piso. |
+| ¿Idioma de la interfaz? | Español e inglés, español por defecto. Los mensajes de error se traducen; los códigos no cambian. |
 | ¿Qué pasa con los gastos de un miembro que se va? | No puede irse con saldo pendiente (sección 3.2); sus gastos históricos se conservan. |
 
 ---
@@ -183,6 +189,7 @@ Pago          (id, piso_id FK, de_usuario FK, a_usuario FK, importe_centimos, cr
 | --- | --- | --- | --- |
 | POST | `/api/auth/registro` | Crear cuenta | 01 |
 | POST | `/api/auth/login` | Obtener token | 02 |
+| GET | `/api/auth/yo` | Usuario actual y su piso (para redirigir en el frontend) | 02 |
 | POST | `/api/pisos` | Crear piso | 03 |
 | POST | `/api/pisos/unirse` | Unirse con código | 04 |
 | GET | `/api/pisos/mio` | Ver mi piso y miembros | 05 |
@@ -210,6 +217,7 @@ Pago          (id, piso_id FK, de_usuario FK, a_usuario FK, importe_centimos, cr
 - Rutas protegidas: sin token se redirige a `/login`; con token pero sin piso, a `/bienvenida`.
 - El token se guarda en memoria y en `localStorage`, y se envía en la cabecera `Authorization: Bearer`.
 - Los formularios usan las Actions de React 19 (`useActionState`) para estados de envío y errores.
+- Textos en español e inglés con selector de idioma (guardado en `localStorage`); el cliente envía `Accept-Language`.
 
 ### 5.4 Estructura del repositorio
 

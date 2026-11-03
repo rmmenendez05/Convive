@@ -98,7 +98,7 @@ Razón: la especificación es la fuente de verdad del proyecto (Spec-Driven Deve
   - MAJOR: eliminar o redefinir un principio de forma incompatible.
   - MINOR: añadir un principio o sección, o ampliar materialmente una regla.
   - PATCH: aclaraciones y correcciones de redacción.
-- La guía de desarrollo en tiempo de ejecución está en `SPECS.md` y en los artefactos de
+- La guía de desarrollo en tiempo de ejecución está en `docs/SPECS.md` y en los artefactos de
   `specs/`.
 
 **Version**: 1.0.0 | **Ratified**: 2026-11-03 | **Last Amended**: 2026-11-03
